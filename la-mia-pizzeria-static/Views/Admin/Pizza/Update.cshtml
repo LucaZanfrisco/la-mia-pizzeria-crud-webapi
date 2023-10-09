@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "Admin/_Layout";
+}
+
+@model PizzaFormModel
+
+<div class="container content">
+    <a class="myBtn back" asp-action="Index" asp-controller="Pizza"><i class="fa-solid fa-arrow-left"></i></a>
+    <div class="row justify-content-start align-items-start mt-5 h-100">
+        <div class="col-12 col-lg-8" id="update">
+            <h2 class="fw-bold text-danger">Aggiungi una nuova pizza</h2>
+            <form asp-controller="Pizza" asp-action="Update" asp-route-id="@Model.Pizza.Id" method="post" class="row row-cols-1 row-cols-lg-2">
+                @Html.AntiForgeryToken()
+                <div class="my-3">
+                    <label class="fs-4 fw-bold form-label">Immagine copertina</label>
+                    <input asp-for="Pizza.Image" type="text" class="form-control" placeholder="Inserire path dell'immagine di copertina" id="imgPath" />
+                    <span asp-validation-for="Pizza.Image" class="text-danger fw-bold"></span>
+                </div>
+                <div class="my-3">
+                    <label class="fs-4 fw-bold form-label">Nome</label>
+                    <input asp-for="Pizza.Name" type="text" class="form-control" placeholder="Inserire nome della pizza" id="nome" />
+                    <span asp-validation-for="Pizza.Name" class="text-danger fw-bold"></span>
+                </div>
+                <div class="my-3">
+                    <label class="fs-4 fw-bold form-label">Ingredienti</label>
+                    <input asp-for="Pizza.Description" type="text" class="form-control" placeholder="Inserire ingredienti della pizza" id="ingredienti" />
+                    <span asp-validation-for="Pizza.Description" class="text-danger fw-bold"></span>
+                </div>
+                <div class="my-3">
+                    <label class="fs-4 fw-bold form-label">Prezzo</label>
+                    <input asp-for="Pizza.Price" type="number" class="form-control" placeholder="Inserire prezzo della pizza" id="prezzo" step="any" />
+                    <span asp-validation-for="Pizza.Price" class="text-danger fw-bold"></span>
+                </div>
+                <div class="my-3">
+                    <label class="fs-4 fw-bold form-label">Categoria</label>
+                    <select asp-for="Pizza.CategoryId" class="form-select">
+                        <option value="">Seleziona una categiora della pizza...</option>
+                        @foreach(Category category in Model.Categories)
+                        {
+                            <option value="@category.Id" selected="@((Model.Pizza.CategoryId == category.Id) ? "selected" : null)">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="my-3">
+                    <label class="form-label fs-4 fw-bold">Ingredienti</label>
+                    <select multiple asp-for="SelectedIngredients" class="form-select" size="10" asp-items="@Model.Ingredients">
+                    </select>
+                    <span asp-validation-for="Pizza.Ingredients" class="text-danger fw-bold"></span>
+                </div>
+                <div class="my-3">
+                    <input type="submit" value="Modifica" class="confirmBtn add" />
+                </div>
+            </form>
+        </div>
+        <div class="col-12 col-lg-4">
+            <h2 class="fw-bold text-danger">Recap inserimento nuova pizza</h2>
+            <img id="imgPreview" class="img-fluid" src="@Model.Pizza.Image"/>
+            <hr />
+            <div id="nomePizza">@Model.Pizza.Name</div>
+            <hr />
+            @foreach(Category category in Model.Categories)
+            {
+                <div>@((category.Id == Model.Pizza.CategoryId) ? @category.Name : null)</div>
+            }
+            <hr />
+            <div id="listaIngredienti">@Model.Pizza.Description</div>
+            <hr />
+            <div id="prezzoFinale">@Model.Pizza.Price</div>
+            <hr />
+            @foreach(SelectListItem ingredient in Model.Ingredients)
+            {
+                @foreach(Ingredient selectIng in Model.Pizza.Ingredients)
+                {
+                    @if(ingredient.Text == selectIng.Name)
+                    {
+                        <div>@selectIng.Name</div>
+                    }
+                    
+                }
+            }
+            
+        </div>
+    </div>
+</div>
