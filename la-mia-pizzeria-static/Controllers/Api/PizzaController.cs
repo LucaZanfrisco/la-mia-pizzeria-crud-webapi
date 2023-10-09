@@ -19,12 +19,12 @@ namespace la_mia_pizzeria_static.Controllers.Api
         [HttpGet]
         public IActionResult GetPizzass()
         {
-          using (_db)
+            using(_db)
             {
                 List<Pizza> pizzas = _db.Pizzas.Include(pizza => pizza.Category).Include(pizza => pizza.Ingredients).ToList();
-                
+
                 return Ok(pizzas);
-            }  
+            }
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace la_mia_pizzeria_static.Controllers.Api
         {
             if(name == null)
             {
-                return BadRequest(new {Mesage = "Nessun parametro di ricerca inserito"});
+                return BadRequest(new { Mesage = "Nessun parametro di ricerca inserito" });
             }
 
             using(_db)
@@ -47,7 +47,7 @@ namespace la_mia_pizzeria_static.Controllers.Api
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult GetPizzaById(int id)
         {
             using(_db)
@@ -59,11 +59,61 @@ namespace la_mia_pizzeria_static.Controllers.Api
                     .FirstOrDefault();
 
                 if(foundedPizza == null)
-                    return NotFound(new {Message = "Nessun risultato trovato"});
-                
+                    return NotFound(new { Message = "Nessun risultato trovato" });
+
                 return Ok(foundedPizza);
             }
         }
 
+        [HttpPost]
+        public IActionResult AddPizza([FromBody] Pizza newPizza)
+        {
+            using(_db)
+            {
+                _db.Pizzas.Add(newPizza);
+                _db.SaveChanges();
+
+                return Ok();
+            }
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult EditPizza(int id, [FromBody] Pizza editPizza)
+        {
+            using(_db)
+            {
+                Pizza foundedPizza = _db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
+                if(foundedPizza != null)
+                {
+                    foundedPizza.Name = editPizza.Name;
+                    foundedPizza.Description = editPizza.Description;
+                    foundedPizza.Image = editPizza.Image;
+                    foundedPizza.Price = editPizza.Price;
+                    _db.SaveChanges();
+
+                    return Ok();
+                }
+                return BadRequest(new {Message = "Parametro di ricerca errato"});
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePizza(int id)
+        {
+            using(_db)
+            {
+                Pizza deletePizza = _db.Pizzas.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+                if(deletePizza != null)
+                {
+                    _db.Pizzas.Remove(deletePizza);
+                    _db.SaveChanges();
+
+                    return Ok();
+                }
+
+                return BadRequest(new { Message = "Parametro di ricerca errato" });
+            }
+        }
     }
 }
