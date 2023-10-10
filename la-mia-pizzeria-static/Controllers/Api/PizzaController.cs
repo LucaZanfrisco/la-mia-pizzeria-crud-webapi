@@ -2,6 +2,7 @@
 using la_mia_pizzeria_static.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Serialization;
 
 namespace la_mia_pizzeria_static.Controllers.Api
 {
@@ -17,7 +18,7 @@ namespace la_mia_pizzeria_static.Controllers.Api
         }
 
         [HttpGet]
-        public IActionResult GetPizzass()
+        public IActionResult GetPizzas()
         {
             using(_db)
             {
@@ -89,9 +90,29 @@ namespace la_mia_pizzeria_static.Controllers.Api
                     foundedPizza.Description = editPizza.Description;
                     foundedPizza.Image = editPizza.Image;
                     foundedPizza.Price = editPizza.Price;
+                    foundedPizza.CategoryId = editPizza.CategoryId;
+
+                    if(editPizza.Ingredients != null)
+                    {
+                        if(foundedPizza.Ingredients != null)
+                        {
+                            foundedPizza.Ingredients.Clear();
+                        }
+                        else
+                        {
+                            foundedPizza.Ingredients = new List<Ingredient>();
+                        }
+
+                        foreach(Ingredient ingredient in editPizza.Ingredients)
+                        {
+                            foundedPizza.Ingredients.Add(ingredient);
+                        }
+
+                    }
+                    
                     _db.SaveChanges();
 
-                    return Ok();
+                    return Ok("Pizza modificata con successo");
                 }
                 return BadRequest(new {Message = "Parametro di ricerca errato"});
             }

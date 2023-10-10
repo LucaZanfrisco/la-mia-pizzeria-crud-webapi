@@ -16,12 +16,10 @@ namespace la_mia_pizzeria_static.Controllers
 
         public IActionResult Index()
         {
-            using (PizzeriaContext db = new PizzeriaContext())
-            {
-                List<Pizza> pizzas = db.Pizzas.ToList();
-                return View("/Views/User/UserIndex.cshtml", pizzas);
-            }
+                return View("Index");
         }
+
+
 
         public IActionResult Privacy()
         {

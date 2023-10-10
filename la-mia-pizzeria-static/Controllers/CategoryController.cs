@@ -1,10 +1,12 @@
 ﻿using la_mia_pizzeria_static.Database;
 using la_mia_pizzeria_static.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace la_mia_pizzeria_static.Controllers
 {
+    [Authorize(Roles = "USER,ADMIN")]
     public class CategoryController : Controller
     {
         private PizzeriaContext _db;
@@ -14,6 +16,7 @@ namespace la_mia_pizzeria_static.Controllers
             _db = db;
         }
 
+        
         public IActionResult Index()
         {
             List<Category> categories = _db.Categories.Include(categories => categories.pizzas).ToList();

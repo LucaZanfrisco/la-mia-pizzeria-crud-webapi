@@ -1,0 +1,103 @@
+﻿@{
+    Layout = "Admin/_Layout";
+}
+
+<div class="container d-flex align-items-center flex-column vh-100">
+    <h1 class="pt-3">Lista delle Pizze</h1>
+    <input type="text" id="search-box" class="form-control my-3" placeholder="Cerca per nome della pizza" />
+    <ul id="lista-pizze" class="row row-cols-4 g-3 list-unstyled vh-100 overflow-scroll">
+    </ul>
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        let searchBox = document.getElementById("search-box");
+        let listPizzas = null;
+        let listaPizze = document.getElementById("lista-pizze");
+
+        searchBox.addEventListener("keyup", SearchPizza)
+
+        AllPizzas();
+
+        function SearchPizza() {
+            
+            listaPizze.innerHTML = '';
+            
+            let searchString = searchBox.value;
+            console.log(searchString);
+            if (searchString === "") {
+                AllPizzas();
+            } else {
+                SearchPizzaByName(searchString);
+            }
+
+        }
+
+        function AllPizzas() {
+            axios.get("api/Pizza/GetPizzas").then((response) => {
+                if (response.data.length > 0) {
+                    listPizzas = response.data;
+                    CreateCard(listPizzas);
+                }
+            })
+        }
+
+        function SearchPizzaByName(search) {
+            axios.get("api/Pizza/GetPizzaByName", {
+                params: {
+                    name: search,
+                }
+            }).then(response => {
+                listPizzas = response.data;
+                CreateCard(listPizzas);
+            })
+        }
+
+        function CreateCard(listPizzas) {
+            listPizzas.forEach(element => {
+                let row = document.createElement("li");
+
+                let pizzaCard = document.createElement("div");
+                pizzaCard.classList.add("card");
+                pizzaCard.classList.add("text-center");
+
+                let pizzaImg = document.createElement('img');
+                pizzaImg.classList.add('img-fluid');
+                pizzaCard.append(pizzaImg);
+                pizzaImg.src = element.image;
+
+                let pizzaName = document.createElement("h3");
+                pizzaName.innerText = element.name;
+                pizzaCard.append(pizzaName);
+
+                let pizzaCategory = document.createElement("div");
+                pizzaCategory.innerText = element.category.name;
+                pizzaCategory.classList.add("mb-3");
+                pizzaCard.append(pizzaCategory);
+
+                element.ingredients.forEach(ingredient => {
+                    let pizzaIngredient = document.createElement("div");
+                    pizzaIngredient.innerText = ingredient.name;
+                    pizzaCard.append(pizzaIngredient);
+                })
+                let pizzaPrice = document.createElement("div");
+                pizzaPrice.innerText = `${element.price} €`;
+                pizzaPrice.classList.add("my-3");
+                pizzaCard.append(pizzaPrice);
+
+                let deleteButton = document.createElement('button');
+                deleteButton.innerText = 'Elimina';
+                deleteButton.type = "button";
+                deleteButton.classList.add('btn');
+                deleteButton.classList.add('btn-primary');
+
+                pizzaCard.append(deleteButton);
+                row.append(pizzaCard);
+                listaPizze.appendChild(row);
+            })
+        }
+    </script>
+}
