@@ -23,9 +23,9 @@
         AllPizzas();
 
         function SearchPizza() {
-            
+
             listaPizze.innerHTML = '';
-            
+
             let searchString = searchBox.value;
             console.log(searchString);
             if (searchString === "") {
@@ -93,6 +93,14 @@
                 deleteButton.type = "button";
                 deleteButton.classList.add('btn');
                 deleteButton.classList.add('btn-primary');
+                deleteButton.setAttribute("value", element.id);
+
+                deleteButton.addEventListener('click', function(){
+                    axios.delete(`api/Pizza/DeletePizza/${deleteButton.value}`).then(response => {
+                        console.log(response);
+                        location.reload();
+                    })
+                });
 
                 pizzaCard.append(deleteButton);
                 row.append(pizzaCard);

@@ -130,7 +130,7 @@ namespace la_mia_pizzeria_static.Controllers.Api
                     _db.Pizzas.Remove(deletePizza);
                     _db.SaveChanges();
 
-                    return Ok();
+                    return Ok("Pizza eliminata con successo");
                 }
 
                 return BadRequest(new { Message = "Parametro di ricerca errato" });
